@@ -1,0 +1,120 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+
+library(displease)
+```
+
+# displease
+
+<!-- badges: start -->
+![](https://img.shields.io/badge/cool-useless-green.svg)
+<!-- badges: end -->
+
+The `displease` package provides non-linear interpolation between numeric values.  
+
+It is a replacement for `seq()` for when you want a sequence between two values which is **not** equally spaced.
+
+Easing can look much better than strict linear interpolation when applied  to 
+objects moving spatially.
+
+`displease` = **displ** + **ease**. The results are often used for 
+animating visual **displacement**, and the non-linear interpolation is 
+performed by applying an **easing** function.
+
+
+## Installation
+
+You can install from [GitHub](https://github.com/coolbutuseless/displease) with:
+
+``` r
+# install.package('remotes')
+remotes::install_github('coolbutuseless/displease)
+```
+
+## What's in the box?
+
+* `seq_ease(x1, x2, n, type)` - create a sequence of length `n`
+   between `x1` and `x2`. Apply the easing function given by `type`.
+* type is one of: `sine-in`, `sine-out`, `sine-in-out`, `quad-in`, `quad-out`, `quad-in-out`, `cubic-in`, `cubic-out`, `cubic-in-out`, `quart-in`, `quart-out`, `quart-in-out`, `quint-in`, `quint-out`, `quint-in-out`, `exp-in`, `exp-out`, `exp-in-out`, `circle-in`, `circle-out`, `circle-in-out`, `back-in`, `back-out`, `back-in-out`, `elastic-in`, `elastic-out`, `elastic-in-out`
+
+The following graph shows the `seq_ease()` output for `n = 100` for
+all the different easing functions with given extens of `x1 = 0` and `x2 = 1`
+
+   
+```{r echo=FALSE, fig.height = 10}
+suppressPackageStartupMessages({
+library(dplyr)
+library(ggplot2)
+library(purrr)
+})
+
+
+names   <- c('sine', 'quad', 'cubic', 'quart', 'quint', 'exp', 'circle', 'back', 'elastic')
+methods <- c('in', 'out', 'in-out')
+
+df <- as_tibble(expand.grid(method = methods, name = names)) %>%
+  mutate(
+    type   = paste(name, method, sep="-")
+  )
+
+ys <- map_dfr(df$type, ~tibble(type = .x, x = 1:100, y = seq_ease(type = .x)))
+
+df <- left_join(df, ys, by = 'type')
+
+
+ggplot(df) + 
+  geom_line(aes(x, y)) + 
+  facet_grid(name ~ method) + 
+  theme_bw() + 
+  scale_y_continuous(name = NULL, breaks = c(0, 1)) + 
+  scale_x_continuous(name = NULL, breaks = c(0, 100)) +
+  theme(axis.title = element_blank(), axis.text.x = element_blank()) + 
+  coord_fixed(50)
+
+```
+
+
+
+## Example
+
+
+```{r example}
+library(displease)
+
+# normal linear interpolation using seq()
+(y_linear       <- seq(1, 10, length.out = 10))
+
+# Non-linear interpolation using {displease}
+(y_cubic_in     <- seq_ease(1, 10, n=10, type = 'cubic-in'))
+(y_cubic_in_out <- seq_ease(1, 10, n=10, type = 'cubic-in-out'))
+
+plot(1:10, y_linear      , type = 'b')
+plot(1:10, y_cubic_in    , type = 'b')
+plot(1:10, y_cubic_in_out, type = 'b')
+```
+
+
+## Related Software
+
+* [tweenr](https://github.com/thomasp85/tweenr) is a more general purpose package 
+  which will interpolate other types besides numeric values e.g. dates and colours.
+  Expected data input is data.frames, or lists of data.frames. See for example
+  `tweenr::tween_numeric()`
+  
+
+## Acknowledgements
+
+* R Core for developing and maintaining such a wonderful language.
+* CRAN maintainers, for patiently shepherding packages onto CRAN and maintaining
+  the repository
