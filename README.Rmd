@@ -105,6 +105,83 @@ plot(1:10, y_cubic_in_out, type = 'b')
 ```
 
 
+## Animated example
+
+```{r eval = FALSE, echo = FALSE}
+N <- 50
+linear  = seq(0, 1, length.out = N)
+sine    = seq_ease(0, 1, n=N, type = 'sine-in-out')
+quad    = seq_ease(0, 1, n=N, type = 'quad-in-out')
+cubic   = seq_ease(0, 1, n=N, type = 'cubic-in-out')
+quart   = seq_ease(0, 1, n=N, type = 'quart-in-out')
+quint   = seq_ease(0, 1, n=N, type = 'quint-in-out')
+exp     = seq_ease(0, 1, n=N, type = 'exp-in-out')
+circle  = seq_ease(0, 1, n=N, type = 'circle-in-out')
+back    = seq_ease(0, 1, n=N, type = 'back-in-out')
+elastic = seq_ease(0, 1, n=N, type = 'elastic-in-out')
+
+df <- data.frame(
+  idx = seq_len(N * 2),
+  linear  = c(linear , rev(linear )),
+  sine    = c(sine   , rev(sine   )),
+  quad    = c(quad   , rev(quad   )),
+  cubic   = c(cubic  , rev(cubic  )),
+  quart   = c(quart  , rev(quart  )),
+  quint   = c(quint  , rev(quint  )),
+  exp     = c(exp    , rev(exp    )),
+  circle  = c(circle , rev(circle )),
+  back    = c(back   , rev(back   )),
+  elastic = c(elastic, rev(elastic))
+)
+
+mdf <- tidyr::gather(df, type, value, -idx)
+
+dir.create('man/figures/anim/', showWarnings = FALSE)
+zz <- list.files('man/figures/anim/', full.names = TRUE)
+unlink(zz)
+
+alpha <- c(
+  '0' = 1,
+  '1' = 0.15,
+  '2' = 0.1,
+  '3' = 0.07,
+  '4' = 0.03,
+  '5' = 0.02,
+  '6' = 0.01
+)
+
+create_plot <- function(this_idx) {
+  plot_df <- mdf %>% 
+    filter(idx <= this_idx, this_idx - idx <= 5) %>%
+    mutate(lag = as.character(this_idx - idx))
+  p <- ggplot(plot_df) + 
+    geom_point(aes(type, value, alpha = lag), size = 3, stroke = NA) + 
+    theme_void() + 
+    ylim(-0.2, 1.2) + 
+    theme(
+      axis.text.x = element_text(),
+      legend.position = 'none'
+    ) + 
+    scale_alpha_manual(values = alpha)
+  
+  filename <- sprintf("man/figures/anim/%03i.png", this_idx)
+  ggsave(filename, p, width = 6, height = 5)
+  p
+}
+
+seq_len(N*2) %>% purrr::walk(create_plot)
+
+
+# system.time({ system("convert man/figures/anim/*.png man/figures/anim.gif") })
+# system.time({ system("gifski --fast --fps 10 man/figures/anim/*.png --output man/figures/anim2.gif")})
+system.time({ system("gifski --fps 10 man/figures/anim/*.png --output man/figures/anim2.gif")})
+system("gifsicle -k 16 -O99 man/figures/anim2.gif -o man/figures/anim3.gif")
+```
+
+
+<img src="man/figures/anim3.gif" width="100%" />
+
+
 ## Related Software
 
 * [tweenr](https://github.com/thomasp85/tweenr) is a more general purpose package 

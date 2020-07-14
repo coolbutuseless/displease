@@ -82,6 +82,10 @@ plot(1:10, y_cubic_in_out, type = 'b')
 
 <img src="man/figures/README-example-3.png" width="100%" />
 
+## Animated example
+
+<img src="man/figures/anim3.gif" width="100%" />
+
 ## Related Software
 
   - [tweenr](https://github.com/thomasp85/tweenr) is a more general
