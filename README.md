@@ -33,18 +33,15 @@ remotes::install_github('coolbutuseless/displease)
 
 ## What’s in the box?
 
-  - `seq_ease(x1, x2, n, type)` - create a sequence of length `n`
-    between `x1` and `x2`. Apply the easing function given by `type`.
-  - type is one of: `sine-in`, `sine-out`, `sine-in-out`, `quad-in`,
-    `quad-out`, `quad-in-out`, `cubic-in`, `cubic-out`, `cubic-in-out`,
-    `quart-in`, `quart-out`, `quart-in-out`, `quint-in`, `quint-out`,
-    `quint-in-out`, `exp-in`, `exp-out`, `exp-in-out`, `circle-in`,
-    `circle-out`, `circle-in-out`, `back-in`, `back-out`, `back-in-out`,
-    `elastic-in`, `elastic-out`, `elastic-in-out`
+- `seq_ease(x1, x2, n, type, direction)` - create a sequence of length
+  `n` between `x1` and `x2`. Apply the easing function given by `type`.
+- `type` is one of: `sine`, `quad`, `cubic`, `quart`, `quint`, `exp`,
+  `circle`, `back`, `elastic`
+- `direction` is one of: `in`, `out`, `in-out`
 
 The following graph shows the `seq_ease()` output for `n = 100` for all
-the different easing functions with given extens of `x1 = 0` and `x2
-= 1`
+the different easing functions with given extents of `x1 = 0` and
+`x2 = 1`
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
@@ -58,10 +55,10 @@ library(displease)
 #>  [1]  1  2  3  4  5  6  7  8  9 10
 
 # Non-linear interpolation using {displease}
-(y_cubic_in     <- seq_ease(1, 10, n=10, type = 'cubic-in'))
+(y_cubic_in     <- seq_ease(1, 10, n=10, type = 'cubic', direction = 'in'))
 #>  [1]  1.000000  1.012346  1.098765  1.333333  1.790123  2.543210  3.666667
 #>  [8]  5.234568  7.320988 10.000000
-(y_cubic_in_out <- seq_ease(1, 10, n=10, type = 'cubic-in-out'))
+(y_cubic_in_out <- seq_ease(1, 10, n=10, type = 'cubic', direction = 'in-out'))
 #>  [1]  1.000000  1.049383  1.395062  2.333333  4.160494  6.839506  8.666667
 #>  [8]  9.604938  9.950617 10.000000
 
@@ -84,17 +81,11 @@ plot(1:10, y_cubic_in_out, type = 'b')
 
 ## Animated example
 
+This animation shows each of the easing types.
+
 <img src="man/figures/anim3.gif" width="100%" />
 
 ## Related Software
 
-  - [tweenr](https://github.com/thomasp85/tweenr) is a more general
-    purpose package which will interpolate other types besides numeric
-    values e.g. dates and colours. Expected data input is data.frames,
-    or lists of data.frames. See for example `tweenr::tween_numeric()`
-
-## Acknowledgements
-
-  - R Core for developing and maintaining such a wonderful language.
-  - CRAN maintainers, for patiently shepherding packages onto CRAN and
-    maintaining the repository
+- [tweenr](https://github.com/thomasp85/tweenr) is a more general
+  purpose package for interpolation

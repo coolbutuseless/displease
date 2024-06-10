@@ -5,17 +5,28 @@
 #'
 #' @param x1,x2 Numeric values
 #' @param n steps
-#' @param type a combination of a name plus 'in', 'out' or 'in_out'. Valid names
+#' @param type Valid types
 #'        are 'sine', 'quad', 'cubic', 'quart', 'quint', 'exp', 'circle', 'back',
-#'        'elastic'.  E.g. 'cubic-in-out', 'exp-in'
+#'        'elastic', 'linear'. Default: 'cubic'
+#' @param direction One of 'in', 'out or 'in-out'. Default: 'in-out'
 #'
 #' @return Numeric vector of length \code{n}
+#' 
+#' @examples
+#' x <- seq_ease(x1 = 0, x2 = 1, n = 20, type = 'cubic', direction = 'in-out')
+#' x
+#' plot(x)
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-seq_ease <- function(x1=0, x2=1, n=100, type) {
+seq_ease <- function(x1 = 0, x2 = 1, n = 100, type = 'cubic', direction = 'in-out') {
   loc <- seq(0, 1, length.out = n)
+  
+  if (type == 'linear') {
+    return(loc)
+  }
 
-  type <- gsub("\\s|-", "_", type)
+  stopifnot(direction %in% c('in', 'out', 'in-out'))
+  type <- paste0(type, '-', direction)
 
   fac <- switch(
     type,
@@ -23,52 +34,52 @@ seq_ease <- function(x1=0, x2=1, n=100, type) {
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Sine
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    sine_in     = 1 - cos((loc * pi) / 2),
-    sine_out    = sin((loc * pi) / 2),
-    sine_in_out = -(cos(loc * pi) - 1) / 2,
+    `sine-in`     = 1 - cos((loc * pi) / 2),
+    `sine-out`    = sin((loc * pi) / 2),
+    `sine-in-out` = -(cos(loc * pi) - 1) / 2,
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Quad
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    quad_in     = loc^2,
-    quad_out    = 1 - (1 - loc)^2,
-    quad_in_out = ifelse(loc < 0.5,
+    `quad-in`     = loc^2,
+    `quad-out`    = 1 - (1 - loc)^2,
+    `quad-in-out` = ifelse(loc < 0.5,
                          2 * loc^2,
                          1 - 0.5 * (-2 * loc + 2)^2),
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Cubic
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    cubic_in  = loc^3,
-    cubic_out = 1 - (1 - loc)^3,
-    cubic_in_out = ifelse(loc < 0.5,
+    `cubic-in`  = loc^3,
+    `cubic-out` = 1 - (1 - loc)^3,
+    `cubic-in-out` = ifelse(loc < 0.5,
                           4 * loc^3,
                           1 - 0.5 * (-2 * loc + 2)^3),
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Quart
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    quart_in     = loc^4,
-    quart_out    = 1 - (1 - loc)^4,
-    quart_in_out = ifelse(loc < 0.5,
+    `quart-in`     = loc^4,
+    `quart-out`    = 1 - (1 - loc)^4,
+    `quart-in-out` = ifelse(loc < 0.5,
                           8 * loc^4,
                           1 - 0.5 * (-2 * loc + 2)^4),
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Quint
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    quint_in     = loc^5,
-    quint_out    = 1 - (1 - loc)^5,
-    quint_in_out = ifelse(loc < 0.5,
+    `quint-in`     = loc^5,
+    `quint-out`    = 1 - (1 - loc)^5,
+    `quint-in-out` = ifelse(loc < 0.5,
                           16 * loc^5,
                           1 - 0.5 * (-2 * loc + 2)^5),
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Exp
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    exp_in     = 2^(10 * loc - 10),
-    exp_out    = 1 - 2^(-10 * loc),
-    exp_in_out = ifelse(loc == 0, 0,
+    `exp-in`     = 2^(10 * loc - 10),
+    `exp-out`    = 1 - 2^(-10 * loc),
+    `exp-in-out` = ifelse(loc == 0, 0,
                         ifelse(loc == 1, 1,
                                ifelse(loc < 0.5,
                                       2 ^ (20 * loc - 10)/2,
@@ -80,9 +91,9 @@ seq_ease <- function(x1=0, x2=1, n=100, type) {
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Circle
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    circle_in     = 1 - sqrt(1 - loc^2),
-    circle_out    = sqrt(1 - (loc - 1)^2),
-    circle_in_out = suppressWarnings({
+    `circle-in`     = 1 - sqrt(1 - loc^2),
+    `circle-out`    = sqrt(1 - (loc - 1)^2),
+    `circle-in-out` = suppressWarnings({
       ifelse(loc < 0.5,
              (1 - sqrt(1 - (2 * loc)^2)) / 2,
              0.5 * (sqrt(1 - (-2 * loc + 2)^2) + 1))
@@ -91,9 +102,9 @@ seq_ease <- function(x1=0, x2=1, n=100, type) {
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Back
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    back_in     = 2.70158 * loc^3 - 1.70158 * loc^2,
-    back_out    = 1 + 2.70158 * (loc - 1)^3 + 1.70158 * (loc - 1)^2,
-    back_in_out = {
+    `back-in`     = 2.70158 * loc^3 - 1.70158 * loc^2,
+    `back-out`    = 1 + 2.70158 * (loc - 1)^3 + 1.70158 * (loc - 1)^2,
+    `back-in-out` = {
       c1 <- 1.70158
       c2 <- c1 * 1.525
       ifelse(loc < 0.5,
@@ -105,20 +116,20 @@ seq_ease <- function(x1=0, x2=1, n=100, type) {
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Elastic
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    elastic_in     = ifelse(
+    `elastic-in`     = ifelse(
       loc == 0, 0,
       ifelse(loc == 1,
              1,
              -(2 ^ (10*loc-10)) * sin((loc * 10 - 10.75) * 2 * pi / 3)
              )
     ),
-    elastic_out    = ifelse(
+    `elastic-out`    = ifelse(
       loc == 0, 0,
       ifelse(loc == 1,
              1,
              2^(-10*loc) * sin((loc * 10 - 0.75) * 2 * pi / 3) + 1)
     ),
-    elastic_in_out = ifelse(
+    `elastic-in-out` = ifelse(
       loc == 0, 0,
       ifelse(loc == 1, 1,
              ifelse(loc < 0.5,

@@ -44,38 +44,41 @@ remotes::install_github('coolbutuseless/displease)
 
 ## What's in the box?
 
-* `seq_ease(x1, x2, n, type)` - create a sequence of length `n`
+* `seq_ease(x1, x2, n, type, direction)` - create a sequence of length `n`
    between `x1` and `x2`. Apply the easing function given by `type`.
-* type is one of: `sine-in`, `sine-out`, `sine-in-out`, `quad-in`, `quad-out`, `quad-in-out`, `cubic-in`, `cubic-out`, `cubic-in-out`, `quart-in`, `quart-out`, `quart-in-out`, `quint-in`, `quint-out`, `quint-in-out`, `exp-in`, `exp-out`, `exp-in-out`, `circle-in`, `circle-out`, `circle-in-out`, `back-in`, `back-out`, `back-in-out`, `elastic-in`, `elastic-out`, `elastic-in-out`
+* `type` is one of: `sine`, `quad`, `cubic`, `quart`, `quint`, `exp`, 
+  `circle`, `back`, `elastic`
+* `direction` is one of: `in`, `out`, `in-out`
 
 The following graph shows the `seq_ease()` output for `n = 100` for
-all the different easing functions with given extens of `x1 = 0` and `x2 = 1`
+all the different easing functions with given extents of `x1 = 0` and `x2 = 1`
 
    
 ```{r echo=FALSE, fig.height = 10}
 suppressPackageStartupMessages({
-library(dplyr)
-library(ggplot2)
-library(purrr)
+  library(dplyr)
+  library(ggplot2)
+  library(purrr)
 })
 
 
-names   <- c('sine', 'quad', 'cubic', 'quart', 'quint', 'exp', 'circle', 'back', 'elastic')
-methods <- c('in', 'out', 'in-out')
+type   <- c('sine', 'quad', 'cubic', 'quart', 'quint', 'exp', 'circle', 'back', 'elastic')
+direction <- c('in', 'out', 'in-out')
 
-df <- as_tibble(expand.grid(method = methods, name = names)) %>%
-  mutate(
-    type   = paste(name, method, sep="-")
-  )
+df <- as_tibble(expand.grid(type = type, direction = direction)) 
 
-ys <- map_dfr(df$type, ~tibble(type = .x, x = 1:100, y = seq_ease(type = .x)))
+df <- purrr::map2_dfr(df$type, df$direction, 
+                      ~tibble(
+                        type = .x, 
+                        direction = .y, 
+                        x = 1:100, 
+                        y = seq_ease(type = .x, direction = .y)))
 
-df <- left_join(df, ys, by = 'type')
 
 
 ggplot(df) + 
   geom_line(aes(x, y)) + 
-  facet_grid(name ~ method) + 
+  facet_grid(type ~ direction) + 
   theme_bw() + 
   scale_y_continuous(name = NULL, breaks = c(0, 1)) + 
   scale_x_continuous(name = NULL, breaks = c(0, 100)) +
@@ -96,8 +99,8 @@ library(displease)
 (y_linear       <- seq(1, 10, length.out = 10))
 
 # Non-linear interpolation using {displease}
-(y_cubic_in     <- seq_ease(1, 10, n=10, type = 'cubic-in'))
-(y_cubic_in_out <- seq_ease(1, 10, n=10, type = 'cubic-in-out'))
+(y_cubic_in     <- seq_ease(1, 10, n=10, type = 'cubic', direction = 'in'))
+(y_cubic_in_out <- seq_ease(1, 10, n=10, type = 'cubic', direction = 'in-out'))
 
 plot(1:10, y_linear      , type = 'b')
 plot(1:10, y_cubic_in    , type = 'b')
@@ -107,18 +110,20 @@ plot(1:10, y_cubic_in_out, type = 'b')
 
 ## Animated example
 
+This animation shows each of the easing types.
+
 ```{r eval = FALSE, echo = FALSE}
 N <- 50
 linear  = seq(0, 1, length.out = N)
-sine    = seq_ease(0, 1, n=N, type = 'sine-in-out')
-quad    = seq_ease(0, 1, n=N, type = 'quad-in-out')
-cubic   = seq_ease(0, 1, n=N, type = 'cubic-in-out')
-quart   = seq_ease(0, 1, n=N, type = 'quart-in-out')
-quint   = seq_ease(0, 1, n=N, type = 'quint-in-out')
-exp     = seq_ease(0, 1, n=N, type = 'exp-in-out')
-circle  = seq_ease(0, 1, n=N, type = 'circle-in-out')
-back    = seq_ease(0, 1, n=N, type = 'back-in-out')
-elastic = seq_ease(0, 1, n=N, type = 'elastic-in-out')
+sine    = seq_ease(0, 1, n=N, type = 'sine'   , direction = 'in-out')
+quad    = seq_ease(0, 1, n=N, type = 'quad'   , direction = 'in-out')
+cubic   = seq_ease(0, 1, n=N, type = 'cubic'  , direction = 'in-out')
+quart   = seq_ease(0, 1, n=N, type = 'quart'  , direction = 'in-out')
+quint   = seq_ease(0, 1, n=N, type = 'quint'  , direction = 'in-out')
+exp     = seq_ease(0, 1, n=N, type = 'exp'    , direction = 'in-out')
+circle  = seq_ease(0, 1, n=N, type = 'circle' , direction = 'in-out')
+back    = seq_ease(0, 1, n=N, type = 'back'   , direction = 'in-out')
+elastic = seq_ease(0, 1, n=N, type = 'elastic', direction = 'in-out')
 
 df <- data.frame(
   idx = seq_len(N * 2),
@@ -185,13 +190,5 @@ system("gifsicle -k 16 -O99 man/figures/anim2.gif -o man/figures/anim3.gif")
 ## Related Software
 
 * [tweenr](https://github.com/thomasp85/tweenr) is a more general purpose package 
-  which will interpolate other types besides numeric values e.g. dates and colours.
-  Expected data input is data.frames, or lists of data.frames. See for example
-  `tweenr::tween_numeric()`
+  for interpolation
   
-
-## Acknowledgements
-
-* R Core for developing and maintaining such a wonderful language.
-* CRAN maintainers, for patiently shepherding packages onto CRAN and maintaining
-  the repository

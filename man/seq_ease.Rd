@@ -4,20 +4,27 @@
 \alias{seq_ease}
 \title{Easing between two values}
 \usage{
-seq_ease(x1 = 0, x2 = 1, n = 100, type)
+seq_ease(x1 = 0, x2 = 1, n = 100, type = "cubic", direction = "in-out")
 }
 \arguments{
 \item{x1, x2}{Numeric values}
 
 \item{n}{steps}
 
-\item{type}{a combination of a name plus 'in', 'out' or 'in_out'. Valid names
+\item{type}{Valid types
 are 'sine', 'quad', 'cubic', 'quart', 'quint', 'exp', 'circle', 'back',
-'elastic'.  E.g. 'cubic-in-out', 'exp-in'}
+'elastic', 'linear'. Default: 'cubic'}
+
+\item{direction}{One of 'in', 'out or 'in-out'. Default: 'in-out'}
 }
 \value{
 Numeric vector of length \code{n}
 }
 \description{
 Easing between two values
+}
+\examples{
+x <- seq_ease(x1 = 0, x2 = 1, n = 20, type = 'cubic', direction = 'in-out')
+x
+plot(x)
 }
