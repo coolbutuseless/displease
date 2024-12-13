@@ -2,7 +2,7 @@
 % Please edit documentation in R/seq-color.R
 \name{seq_color}
 \alias{seq_color}
-\title{Interpolate (non-linearly) between two colours}
+\title{Interpolate (non-linearly) between two colors}
 \usage{
 seq_color(
   col1,
@@ -14,7 +14,7 @@ seq_color(
 )
 }
 \arguments{
-\item{col1, col2}{the two colours to interpolate between}
+\item{col1, col2}{the two colors to interpolate between}
 
 \item{n}{steps}
 
@@ -33,10 +33,10 @@ or "oklch" (Polar form of oklab).
 Note: Not all color spaces make sense for interpolation.}
 }
 \value{
-character vector containing a colour sequence
+character vector containing a color sequence
 }
 \description{
-Interpolate (non-linearly) between two colours
+Interpolate (non-linearly) between two colors
 }
 \examples{
 seq_color('red', 'blue', type = 'cubic', direction = 'in-out', colorspace = 'hcl')

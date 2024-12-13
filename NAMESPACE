@@ -2,6 +2,3 @@
 
 export(seq_color)
 export(seq_ease)
-importFrom(farver,convert_colour)
-importFrom(farver,decode_colour)
-importFrom(farver,encode_colour)
