@@ -47,14 +47,34 @@ remotes::install_github('coolbutuseless/displease)
 
 * `seq_ease(x1, x2, n, type, direction)` - create a sequence of length `n`
    between `x1` and `x2`. Apply the easing function given by `type`.
-* `type` is one of: `sine`, `quad`, `cubic`, `quart`, `quint`, `exp`, 
+    * `type` is one of: `sine`, `quad`, `cubic`, `quart`, `quint`, `exp`, 
   `circle`, `back`, `elastic`
-* `direction` is one of: `in`, `out`, `in-out`
+    * `direction` is one of: `in`, `out`, `in-out`
+* `seq_color(col1, col2, ...)` non-linear interpolation between two colors.
 
 The following graph shows the `seq_ease()` output for `n = 100` for
 all the different easing functions with given extents of `x1 = 0` and `x2 = 1`
 
-   
+## Displacement Easing
+
+
+```{r example}
+library(displease)
+
+# normal linear interpolation using seq()
+(y_linear       <- seq(1, 10, length.out = 10))
+
+# Non-linear interpolation using {displease}
+(y_cubic_in     <- seq_ease(1, 10, n=10, type = 'cubic', direction = 'in'))
+(y_cubic_in_out <- seq_ease(1, 10, n=10, type = 'cubic', direction = 'in-out'))
+
+plot(1:10, y_linear      , type = 'b')
+plot(1:10, y_cubic_in    , type = 'b')
+plot(1:10, y_cubic_in_out, type = 'b')
+```
+
+### Illustration of supported easings
+
 ```{r echo=FALSE, fig.height = 10}
 suppressPackageStartupMessages({
   library(dplyr)
@@ -89,23 +109,33 @@ ggplot(df) +
 ```
 
 
+## Easing between two colors
 
-## Example
+When easing between two colors, the `colorspace` where the interpolation takes
+place will have a large effect on the final result.
+
+The examples below show the interpolation from 'red' to 'blue'.  The only difference
+between the examples is the colorspace where the interpolation occurs.
+
+```{r fig.height = 1}
+n <- 100
+cols <- seq_color('red', 'blue', n = n, direction = 'in-out', type = 'cubic',
+                  colorspace = 'hcl')
+head(cols)
+grid::grid.rect(x = seq(0, 0.95, length.out = n), width = 0.1, 
+                gp = grid::gpar(fill = cols, col = NA))
+```
 
 
-```{r example}
-library(displease)
 
-# normal linear interpolation using seq()
-(y_linear       <- seq(1, 10, length.out = 10))
 
-# Non-linear interpolation using {displease}
-(y_cubic_in     <- seq_ease(1, 10, n=10, type = 'cubic', direction = 'in'))
-(y_cubic_in_out <- seq_ease(1, 10, n=10, type = 'cubic', direction = 'in-out'))
-
-plot(1:10, y_linear      , type = 'b')
-plot(1:10, y_cubic_in    , type = 'b')
-plot(1:10, y_cubic_in_out, type = 'b')
+```{r fig.height = 1}
+n <- 100
+cols <- seq_color('red', 'blue', n = n, direction = 'in-out', type = 'cubic', 
+                  colorspace = 'lab')
+head(cols)
+grid::grid.rect(x = seq(0, 0.95, length.out = n), width = 0.1, 
+                gp = grid::gpar(fill = cols, col = NA))
 ```
 
 
@@ -114,6 +144,9 @@ plot(1:10, y_cubic_in_out, type = 'b')
 This animation shows each of the easing types.
 
 ```{r eval = FALSE, echo = FALSE}
+library(dplyr)
+library(ggplot2)
+
 N <- 50
 linear  = seq(0, 1, length.out = N)
 sine    = seq_ease(0, 1, n=N, type = 'sine'   , direction = 'in-out')
@@ -161,11 +194,11 @@ create_plot <- function(this_idx) {
     filter(idx <= this_idx, this_idx - idx <= 5) %>%
     mutate(lag = as.character(this_idx - idx))
   p <- ggplot(plot_df) + 
-    geom_point(aes(type, value, alpha = lag), size = 3, stroke = NA) + 
+    geom_point(aes(value, type, alpha = lag), size = 3, stroke = NA) + 
     theme_void() + 
-    ylim(-0.2, 1.2) + 
+    xlim(-0.2, 1.2) + 
     theme(
-      axis.text.x = element_text(),
+      axis.text.y = element_text(),
       legend.position = 'none'
     ) + 
     scale_alpha_manual(values = alpha)
@@ -188,8 +221,3 @@ system("gifsicle -k 16 -O99 man/figures/anim2.gif -o man/figures/anim3.gif")
 <img src="man/figures/anim3.gif" width="100%" />
 
 
-## Related Software
-
-* [tweenr](https://github.com/thomasp85/tweenr) is a more general purpose package 
-  for interpolation
-  

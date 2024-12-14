@@ -13,9 +13,12 @@
 #' or "oklch" (Polar form of oklab).
 #' Note: Not all color spaces make sense for interpolation.
 #' @return character vector containing a color sequence
-#'
 #' @examples
-#' seq_color('red', 'blue', type = 'cubic', direction = 'in-out', colorspace = 'hcl')
+#' n <- 20
+#' cols <- seq_color('red', 'blue', n = n, direction = 'in-out', colorspace = 'hcl')
+#' cols
+#' grid::grid.rect(x = seq(0, 0.95, length.out = n), width = 0.1, 
+#'                 gp = grid::gpar(fill = cols, col = NA))
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 seq_color <- function(col1, col2, n = 100, type = 'cubic', direction = 'in-out', 

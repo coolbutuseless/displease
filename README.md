@@ -36,17 +36,17 @@ remotes::install_github('coolbutuseless/displease)
 
 - `seq_ease(x1, x2, n, type, direction)` - create a sequence of length
   `n` between `x1` and `x2`. Apply the easing function given by `type`.
-- `type` is one of: `sine`, `quad`, `cubic`, `quart`, `quint`, `exp`,
-  `circle`, `back`, `elastic`
-- `direction` is one of: `in`, `out`, `in-out`
+  - `type` is one of: `sine`, `quad`, `cubic`, `quart`, `quint`, `exp`,
+    `circle`, `back`, `elastic`
+  - `direction` is one of: `in`, `out`, `in-out`
+- `seq_color(col1, col2, ...)` non-linear interpolation between two
+  colors.
 
 The following graph shows the `seq_ease()` output for `n = 100` for all
 the different easing functions with given extents of `x1 = 0` and
 `x2 = 1`
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
-
-## Example
+## Displacement Easing
 
 ``` r
 library(displease)
@@ -80,13 +80,45 @@ plot(1:10, y_cubic_in_out, type = 'b')
 
 <img src="man/figures/README-example-3.png" width="100%" />
 
+### Illustration of supported easings
+
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+
+## Easing between two colors
+
+When easing between two colors, the `colorspace` where the interpolation
+takes place will have a large effect on the final result.
+
+The examples below show the interpolation from ‘red’ to ‘blue’. The only
+difference between the examples is the colorspace where the
+interpolation occurs.
+
+``` r
+n <- 100
+cols <- seq_color('red', 'blue', n = n, direction = 'in-out', type = 'cubic',
+                  colorspace = 'hcl')
+head(cols)
+#> [1] "#FF0000" "#FF0000" "#FF0000" "#FF0000" "#FF0100" "#FF0200"
+grid::grid.rect(x = seq(0, 0.95, length.out = n), width = 0.1, 
+                gp = grid::gpar(fill = cols, col = NA))
+```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
+``` r
+n <- 100
+cols <- seq_color('red', 'blue', n = n, direction = 'in-out', type = 'cubic', 
+                  colorspace = 'lab')
+head(cols)
+#> [1] "#FF0000" "#FF0000" "#FF0000" "#FF0000" "#FF0000" "#FF0000"
+grid::grid.rect(x = seq(0, 0.95, length.out = n), width = 0.1, 
+                gp = grid::gpar(fill = cols, col = NA))
+```
+
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+
 ## Animated example
 
 This animation shows each of the easing types.
 
 <img src="man/figures/anim3.gif" width="100%" />
-
-## Related Software
-
-- [tweenr](https://github.com/thomasp85/tweenr) is a more general
-  purpose package for interpolation

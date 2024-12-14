@@ -16,13 +16,14 @@ seq_color(
 \arguments{
 \item{col1, col2}{the two colors to interpolate between}
 
-\item{n}{steps}
+\item{n}{Number of steps for the transition (including the endpoints)}
 
-\item{type}{Valid types
+\item{type}{Type of motion easing. Default: 'cubic'.  Valid values are
 are 'sine', 'quad', 'cubic', 'quart', 'quint', 'exp', 'circle', 'back',
-'elastic', 'linear'. Default: 'cubic'}
+'elastic', 'linear'.}
 
-\item{direction}{One of 'in', 'out or 'in-out'. Default: 'in-out'}
+\item{direction}{When should the easing apply? Default: "in-out". 
+Valid values are 'in', 'out', in-out'. Default: 'in-out'}
 
 \item{colorspace}{Color space in which to do the interpolation. Default: 'hcl'
 Can be any colorspace understood by the \code{farver} package i.e.
@@ -39,5 +40,9 @@ character vector containing a color sequence
 Interpolate (non-linearly) between two colors
 }
 \examples{
-seq_color('red', 'blue', type = 'cubic', direction = 'in-out', colorspace = 'hcl')
+n <- 20
+cols <- seq_color('red', 'blue', n = n, direction = 'in-out', colorspace = 'hcl')
+cols
+grid::grid.rect(x = seq(0, 0.95, length.out = n), width = 0.1, 
+                gp = grid::gpar(fill = cols, col = NA))
 }

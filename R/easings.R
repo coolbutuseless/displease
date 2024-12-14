@@ -1,17 +1,18 @@
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Easing between two values
+#' Create a sequence interpolating between two values with the specified 
+#' non-linear easing.
 #'
-#' @param x1,x2 Numeric values
-#' @param n steps
-#' @param type Valid types
+#' @param x1,x2 The start and end values of the sequence. Default: 0, 1
+#' @param n Number of steps for the transition (including the endpoints)
+#' @param type Type of motion easing. Default: 'cubic'.  Valid values are
 #'        are 'sine', 'quad', 'cubic', 'quart', 'quint', 'exp', 'circle', 'back',
-#'        'elastic', 'linear'. Default: 'cubic'
-#' @param direction One of 'in', 'out or 'in-out'. Default: 'in-out'
+#'        'elastic', 'linear'.
+#' @param direction When should the easing apply? Default: "in-out". 
+#'        Valid values are 'in', 'out', in-out'. Default: 'in-out'
 #'
 #' @return Numeric vector of length \code{n}
-#' 
 #' @examples
 #' x <- seq_ease(x1 = 0, x2 = 1, n = 20, type = 'cubic', direction = 'in-out')
 #' x
