@@ -13,7 +13,7 @@
 #' or "oklch" (Polar form of oklab).
 #' Note: Not all color spaces make sense for interpolation.
 #' @return character vector containing a color sequence
-#' @examples
+#' @examplesIf requireNamespace('farver', quietly = TRUE)
 #' n <- 20
 #' cols <- seq_color('red', 'blue', n = n, direction = 'in-out', colorspace = 'hcl')
 #' cols

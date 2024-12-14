@@ -40,9 +40,11 @@ character vector containing a color sequence
 Interpolate (non-linearly) between two colors
 }
 \examples{
+\dontshow{if (requireNamespace('farver', quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 n <- 20
 cols <- seq_color('red', 'blue', n = n, direction = 'in-out', colorspace = 'hcl')
 cols
 grid::grid.rect(x = seq(0, 0.95, length.out = n), width = 0.1, 
                 gp = grid::gpar(fill = cols, col = NA))
+\dontshow{\}) # examplesIf}
 }
