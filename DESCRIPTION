@@ -1,6 +1,6 @@
 Package: displease
 Type: Package
-Title: Create Numeric and Color Sequences with Non-Linear Interpolation with Easing
+Title: Numeric and Color Sequences with Non-Linear Interpolation
 Version: 1.0.0
 Authors@R: c(
  person("Mike", "Cheng", role = c("aut", "cre", 'cph'),
